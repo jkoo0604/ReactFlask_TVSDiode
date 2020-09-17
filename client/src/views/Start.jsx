@@ -17,6 +17,7 @@ const Start = () => {
     const paths = ['/eval', '/select'];
 
     const handleChange = newVal => {
+        console.log(newVal);
         setValue(newVal);
         navigate(paths[newVal]);
     };

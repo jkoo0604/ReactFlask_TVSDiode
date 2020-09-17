@@ -32,7 +32,8 @@ function App() {
     const [value, setValue] = useState(0);
     const paths = ['/eval', '/select'];
 
-    const handleChange = newVal => {
+    const handleChange = (e, newVal) => {
+        console.log(newVal);
         setValue(newVal);
         navigate(paths[newVal]);
     };

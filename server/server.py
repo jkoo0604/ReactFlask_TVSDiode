@@ -15,9 +15,9 @@ def getCatDef():
 def getResults():
     data = request.json
     print(data)
-    if ('ref_ids' not in data) | ('categories' not in data) | (type(data['ref_ids']) != list) | (type(data['categories']) != list):
+    if ('ref_ids' not in data) | ('categories' not in data) | (type(data['ref_ids']) != list) | (type(data['categories']) != list | (len(data['ref_ids']) > 0 & len(data['ref_ids']) != len(data['categories']))):
         return {'result_status': 'Failure', 'message': 'Invalid input'}
-    input = {'ref_id': data['ref_ids'], 'categories': data['categories']}
+    # input = {'ref_id': data['ref_ids'], 'categories': data['categories']}
     return calculate(data)
 
 

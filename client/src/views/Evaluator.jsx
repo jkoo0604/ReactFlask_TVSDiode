@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardActions, CardContent, Typography, Grid, TextField, Button, Select, FormControl, InputLabel, MenuItem } from '@material-ui/core';
+import { Button, Select, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
 
 import colors from '../config/colors';
 import MyPaper from '../components/MyPaper';
-import { BorderClear } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -82,7 +81,8 @@ const useStyles = makeStyles((theme) => ({
     },
     error: {
         color: colors.darkActionDelete,
-        marginBottom: 30,
+        height: 15,
+        marginBottom: 15,
         textAlign: 'center'
     }
 }));
@@ -95,7 +95,8 @@ const Evaluator = () => {
     const [inputError, setInputError] = useState('');
     const errors = {'custom': 'Custom evaluator currently unavailable', 'nullCat': 'Category is required for second source evaluation', 'noInput': 'Select evaluation type to proceed'};
     
-    const handleChange = e => {        
+    const handleChange = e => {   
+        setInputError('');     
         if (e.target.value === '2nd Source') {
             setCatOptions(Array.from({length: 15}, (_, i) => i + 1));
         } else {
@@ -106,29 +107,30 @@ const Evaluator = () => {
     };
 
     const handleCatSelect = e => {
+        setInputError(''); 
         setCat(e.target.value);
     }
 
     const handleSubmit = e => {
         // error check
-        let reqBody;
+        let reqBody = {'ref_ids': []};
         if (type[0] === 'Custom') {
             setInputError('custom');
             return;
         } else if (type[0] === '2nd Source' && cat === null) {
             setInputError('nullCat');
             return;
-        } else if (type[0] === '') {
+        } else if (!type.length) {
             setInputError('noInput');
             return;
         };
 
         if (type[0] === 'Formal') {
-            reqBody = Array.from({length: 15}, (_, i) => i + 1);
+            reqBody['categories'] = Array.from({length: 15}, (_, i) => i + 1);
         } else {
-            reqBody = [cat];
+            reqBody['categories'] = [cat];
         };
-        navigate('/results',{state: {reqBody}});
+        // navigate('/results',{state: {reqBody}});
     }
 
     return (
@@ -154,6 +156,7 @@ const Evaluator = () => {
                     <FormControl className={classes.formControl} disabled={!catOptions.length ? true : false}>
                         <InputLabel shrink>2nd Source Category</InputLabel>
                         <Select native value={cat || ''} onChange={handleCatSelect} className={classes.input} inputProps={{classes: {icon: classes.inputColor, select: classes.inputBackground}}}>
+                            <option value="">Select</option>
                             {
                                 catOptions.map((category) => (
                                     <option key={category} value={category}>{category}</option>
