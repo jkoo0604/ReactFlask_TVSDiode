@@ -130,7 +130,7 @@ const Evaluator = () => {
         } else {
             reqBody['categories'] = [cat];
         };
-        // navigate('/results',{state: {reqBody}});
+        // navigate('/results',{replace: true, state: {reqBody}});
     }
 
     return (

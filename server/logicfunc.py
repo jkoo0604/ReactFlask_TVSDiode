@@ -181,6 +181,6 @@ def calculate(input):
         return {'result_status': 'Success', 'results_data': results, 'output_data': output_results}
     except Exception as e:
         print(e)
-        return {'result_status': 'Failure', 'message': 'Error occurred while runnig calculations'}
+        return {'result_status': 'Failure', 'message': 'Error occurred while running calculations'}
     finally:
         conn.close()

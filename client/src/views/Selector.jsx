@@ -172,7 +172,7 @@ const Evaluator = () => {
             return;
         };
         let reqBody = {'ref_ids': [refDeg], 'categories': foundCat};
-        // navigate('/results',{state: {reqBody}});
+        // navigate('/results',{replace: true, state: {reqBody, 'cats': result, 'reqType': 'Select'}});
     }
 
     return (
