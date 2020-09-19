@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Select, TextField, FormControl, InputLabel, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
+import { useSelector, useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
 import { catRef, usageRef, sizeArr, displayCols } from '../config/categories';
@@ -76,8 +77,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Evaluator = () => {
     const classes = useStyles();
+    const result = useSelector(state => state.catDef);
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    const [result, setResult] = useState({});
+    // const [result, setResult] = useState({});
     const [refDeg, setRefDeg] = useState('');
     const [size, setSize] = useState('');
     const [usage, setUsage] = useState('');
@@ -172,6 +175,10 @@ const Evaluator = () => {
             return;
         };
         let reqBody = {'ref_ids': [refDeg], 'categories': foundCat};
+        dispatch({
+            type: 'REQUEST',
+            request: {'reqType': 'Select', 'reqBody': reqBody}
+        });        
         // navigate('/results',{replace: true, state: {reqBody, 'cats': result, 'reqType': 'Select'}});
     }
 

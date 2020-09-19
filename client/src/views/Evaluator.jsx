@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Select, FormControl, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
+import { useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
 import MyPaper from '../components/MyPaper';
@@ -89,11 +90,45 @@ const useStyles = makeStyles((theme) => ({
 
 const Evaluator = () => {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const [type, setType] = useState([]);
     const [cat, setCat] = useState(null);
     const [catOptions, setCatOptions] = useState([]);
     const [inputError, setInputError] = useState('');
-    const errors = {'custom': 'Custom evaluator currently unavailable', 'nullCat': 'Category is required for second source evaluation', 'noInput': 'Select evaluation type to proceed'};
+    const errors = {'custom': 'Custom evaluator currently unavailable', 'nullCat': 'Category is required for second source evaluation', 'noInput': 'Select evaluation type to proceed', 'queryError': 'Error occurred while querying database'};
+
+    useEffect(() => {
+        fetch('/getcatdef').then(r => r.json()).then(res => {
+        if (res['result_status'] === 'Failure') {
+            setInputError('queryError');
+        } else {
+            // console.log('status: ', res['result_status']);
+            console.log('data: ', res['data']);
+            let data = res['data'];
+            let ordered = [];
+            for (let i=1; i<data.columns.length; i++) {
+                if (displayCols.includes(data.columns[i])) {
+                    ordered.push({});
+                    ordered[ordered.length-1]['name'] = data.columns[i];
+                    ordered[ordered.length-1]['values'] = [];
+                    for (let j=0; j<data.data.length; j++) {
+                        ordered[ordered.length-1]['values'].push(data.data[j][i]);
+                    }
+                }
+            }
+            // [{name: 'col1', values: [row1, row2, row3]}, {name: col2, values:[]}]
+            console.log(ordered);
+            dispatch({
+                type: 'CATDEF',
+                catDef: {'orderedCats': ordered, 'allCats': data.data, 'colList': data.columns}
+            });
+            setLoading(false);
+        }
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }, []);
     
     const handleChange = e => {   
         setInputError('');     
@@ -130,6 +165,10 @@ const Evaluator = () => {
         } else {
             reqBody['categories'] = [cat];
         };
+        dispatch({
+            type: 'REQUEST',
+            request: {'reqType': 'Evaluate', 'reqBody': reqBody}
+        });
         // navigate('/results',{replace: true, state: {reqBody}});
     }
 

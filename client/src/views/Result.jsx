@@ -3,6 +3,7 @@ import { Button, Accordion, AccordionSummary, AccordionDetails, Divider, Menu, M
 import { makeStyles } from '@material-ui/core/styles';
 import { GetApp, ExpandMoreRounded } from '@material-ui/icons';
 import { navigate } from '@reach/router';
+import { useSelector, useDispatch } from 'react-redux';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { CSVLink } from "react-csv";
@@ -85,14 +86,20 @@ const useStyles = makeStyles((theme) => ({
 
 const Results = props => {
     const classes = useStyles();
+    const cats = useSelector(state => state.catDef);
+    const request = useSelector(state => state.request);
+    const finalResult = useSelector(state => state.queryResult);
+    const reqBody = request['reqBody'];
+    const reqType = request['reqType'];
+    const dispatch = useDispatch();
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
-    const [finalResult, setFinalResult] = useState({});
+    // const [finalResult, setFinalResult] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const [csvData, setCsvData] = useState([]);
     const [pdfData, setPdfData] = useState({});
     const [catCsv, setCatCsv] = useState([]);
-    const {reqBody, cats, reqType} = props.location.state;
+    // const {reqBody, cats, reqType} = props.location.state;
 
 
     useEffect(() => {
@@ -129,7 +136,11 @@ const Results = props => {
             };
 
             if (!columns.length) {             
-                setFinalResult(queryResult);
+                // setFinalResult(queryResult);
+                dispatch({
+                    type: 'RESULT',
+                    queryResult: queryResult
+                });
                 setLoading(false);
                 return;
             };
@@ -172,7 +183,11 @@ const Results = props => {
             };
             setCatCsv(catRows);
 
-            setFinalResult(queryResult);
+            // setFinalResult(queryResult);
+            dispatch({
+                type: 'RESULT',
+                queryResult: queryResult
+            });
             setLoading(false);
         })
         .catch(error => {
@@ -208,6 +223,11 @@ const Results = props => {
     };
 
     const handleBack = () => {
+        dispatch({
+            type: 'RESET',
+            queryResult: null,
+            request: null
+        });
         navigate('/', {replace: true});
     };
 
@@ -216,18 +236,7 @@ const Results = props => {
         <>      
         <div className={classes.root}>
             <MyPaper>
-                <h2 className={classes.title}>TVS-Diode Selection Tool</h2>
-                <p className={classes.subtext}>Enter information below</p>
-                <p className={classes.error}>
-                    {
-                        inputError !== '' ? errors[inputError] : ''
-                    }
-                </p>
-            </MyPaper>
-        </div>
-        <Grid container align='center' className={classes.root}>
-            <Card className={classes.card}>
-                <CardActions className={classes.alignBetween}>
+                <div className={classes.alignBetween}>
                     <Button size="small" className={classes.backButton} onClick={handleBack}>Reset</Button>
                     <IconButton className={classes.button} onClick={handleClick}><GetApp /></IconButton>
                     <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
@@ -235,105 +244,34 @@ const Results = props => {
                         <MenuItem disabled={csvData.length === 0}><CSVLink data={csvData} filename={"result.csv"} onClick={handleClose}>Download full data in CSV</CSVLink></MenuItem>
                         <MenuItem disabled={catCsv.length === 0}><CSVLink data={catCsv} filename={"catdef.csv"} onClick={handleClose}>Download category definitions in CSV</CSVLink></MenuItem>
                     </Menu>
-                </CardActions>
-                <CardContent>
-                    <Typography className={classes.title} gutterBottom variant="h4">
-                        Result
-                    </Typography>
-                    <Typography className={classes.error} variant="subtitle2">
-                        { error ? 'No result to display' : '' }
-                    </Typography>
-                    {/* <Paper className={classes.paper} elevation={5}> */}
-                        {
-                            queryResult['data']['ref_id'].map((ref, idx) => (
-                                <div key={ref} className={classes.resultDiv}>
-                                    <Typography className={classes.subtext} variant='h6'>{ref}</Typography>
-                                    <Accordion>
-                                        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-                                            Category {queryResult['data']['cat_id'][idx]}
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <TableContainer className={classes.container}>
-                                                <Table stickyHeader>
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            {
-                                                                colList.map((col, i) => {
-                                                                    if (i>0) {
-                                                                        return (
-                                                                            <TableCell key={i} align='center' className={`${classes.header} ${classes.cell}`}>
-                                                                                {col}
-                                                                            </TableCell>
-                                                                        )
-                                                                    }
-                                                                })
-                                                            }
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody className={classes.header}>
-                                                        <TableRow>
-                                                            {
-                                                                catDef[queryResult['data']['cat_id'][idx]-1].map((row, i) => {
-                                                                    if(i>0) {
-                                                                        return (
-                                                                        <TableCell key={`col${i}`} align='center' className={classes.cell}>
-                                                                            {row}
-                                                                        </TableCell>
-                                                                        )}
-                                                                })
-                                                            }
-                                                        </TableRow>
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                    {
-                                        queryResult['output']['results'][idx]['data'].length === 0 ? <Typography>No component found</Typography> : 
-                                        <TableContainer className={classes.container}>
-                                            <Table stickyHeader>
-                                                <TableHead>
-                                                    <TableRow>
-                                                        {
-                                                            queryResult['output']['results'][idx]['columns'].map((col, i) => {
-                                                                return (
-                                                                    <TableCell key={i} align='center' className={`${classes.header} ${classes.cell}`}>
-                                                                        {col}
-                                                                    </TableCell>
-                                                                )
-                                                            })
-                                                        }
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody className={classes.header}>
-                                                    {
-                                                        queryResult['output']['results'][idx]['data'].map((row, i) => 
-                                                        <TableRow hover key={i}>
-                                                            {
-                                                                queryResult['output']['results'][idx]['data'][i].map((cell, index) => {
-                                                                    return (
-                                                                    <TableCell key={`col${index}`} align='center' className={classes.cell}>
-                                                                        {cell}
-                                                                    </TableCell>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </TableRow>)
-                                                    }
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    }
-                                    <Divider light classes={{root: classes.divider}}/>
-                                </div>
-                            ))
-                        }
-                    {/* </Paper> */}
-                </CardContent>
-                <CardActions className={classes.alignRight}>
-                </CardActions>
-            </Card>
-        </Grid>
+                </div>
+                <h2 className={classes.title}>{reqType === 'Select' ? 'Selection ' : 'Evaluation '} Result</h2>
+                <p className={classes.error}>
+                    {
+                        inputError !== '' ? errors[inputError] : ''
+                    }
+                </p>
+                {
+                    finalResult['data']['cat_id'].map((cat, idx) => (
+                        <div key = {idx} className={classes.resultDiv}>
+                            { reqType === 'Select' ? <h4 className={classes.subtext}>{finalResult['data']['ref_id'][idx]}</h4> : ''}
+                            <Accordion>
+                                <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+                                    Category {cat}
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <MyTable columns={cats[colList]} data={cats[allCats]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 75}} />
+                                </AccordionDetails>
+                            </Accordion>
+                            {
+                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 100}} />
+                            }
+                            <Divider light classes={{root: classes.divider}}/>
+                        </div>
+                    ))
+                }
+            </MyPaper>
+        </div>
         </>
         
     )

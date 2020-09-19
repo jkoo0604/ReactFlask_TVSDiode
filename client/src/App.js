@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Router, Redirect, navigate } from '@reach/router';
+import { Provider } from 'react-redux';
 import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
@@ -8,6 +9,7 @@ import colors from './config/colors';
 import Results from './views/Results';
 import Evaluator from './views/Evaluator';
 import Selector from './views/Selector';
+import store from './redux/store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +41,7 @@ function App() {
     };
 
   return (
+    <Provider store={store}>
     <div className={`App, ${classes.root}`}>
       <Tabs value={value} onChange={handleChange} className={classes.wrapper} TabIndicatorProps={{className: classes.indicator}} centered>
           <Tab label='Evaluator' />
@@ -51,6 +54,7 @@ function App() {
         <Results path="results/" />
       </Router>
     </div>
+    </Provider>
   );
 }
 
