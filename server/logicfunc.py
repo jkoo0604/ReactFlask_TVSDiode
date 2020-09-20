@@ -8,10 +8,11 @@ def loadCatDef():
     try:
         conn = pymysql.connect(host = 'localhost', user = user, password = password, db = db, charset = 'utf8mb4')
         cat_def = pd.read_sql_query("select * from cat_def;", conn)
-        del components['id']
+        del cat_def['id']
         cat_def = cat_def.fillna('')
         col_name_ref = pd.read_sql_query("select * from col_ref", conn)
         cat_def = cat_def.rename(columns=dict(zip(col_name_ref['col_name'], col_name_ref['final_name'])))
+        # print(cat_def.to_dict(orient='split'))
         return {'result_status': 'Success', 'data': cat_def.to_dict(orient='split')}
     except Exception as e:
         print(e)
@@ -155,7 +156,7 @@ def calculate(input):
                 components['Score'] = ''
                 components['Rank'] = ''
                 components['Evaluated'] = int(datetime.now().strftime('%s%f'))/1000
-                output = components[['Manufacturer','MPN','Status','Rank','Package Size','V Breakdown Max','Dynamic Resistance (Forward)','Junction Capacitance','Leakage Current','Evaluated']].copy()
+                output = components[['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']].copy()
                 results['results'].append(components.to_dict(orient='split'))
                 output_results['results'].append(output.to_dict(orient='split'))
                 continue
@@ -173,7 +174,7 @@ def calculate(input):
             del sorted_components['id']
             sorted_components['Evaluated'] = int(datetime.now().strftime('%s%f'))/1000
 
-            output = sorted_components[['Manufacturer','MPN','Status','Rank','Package Size','V Breakdown Max','Dynamic Resistance (Forward)','Junction Capacitance','Leakage Current','Evaluated']].copy()
+            output = sorted_components[['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']].copy()
 
             results['results'].append(sorted_components.to_dict(orient='split'))
             output_results['results'].append(output.to_dict(orient='split'))

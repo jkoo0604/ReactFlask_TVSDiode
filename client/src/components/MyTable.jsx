@@ -17,12 +17,31 @@ const MyTable = props => {
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                {
+                    data.map((row, idx) => (
+                        <tr key={idx}>
+                            {
+                                row.map((cell, id) => {
+                                    if (id < fixedCol) {
+                                        return (
+                                            <td key={id} style={{...tdStyle, position: 'sticky', left: id}}>{cell}</td>
+                                        )
+                                    } else {
+                                        return (
+                                            <td key={id} style={tdStyle}>{cell}</td>
+                                        )
+                                    }
+                                })
+                            }
+                        </tr>
+                    ))
+                }
+                {/* <tr>
                     {
                         data.map((row, idx) => {
                             if (idx < fixedCol) {
                                 return (
-                                    <td key={idx} style={{...tdStyle, position: 'sticky', left: 0}}>{row}</td>
+                                    <td key={idx} style={{...tdStyle, position: 'sticky', left: idx}}>{row}</td>
                                 )
                             } else {
                                 return (
@@ -31,7 +50,7 @@ const MyTable = props => {
                             }
                         })
                     }
-                </tr>
+                </tr> */}
             </tbody>
         </table>
     )

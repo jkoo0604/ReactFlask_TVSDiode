@@ -9,6 +9,7 @@ import colors from './config/colors';
 import Results from './views/Results';
 import Evaluator from './views/Evaluator';
 import Selector from './views/Selector';
+import Result from './views/Result';
 import store from './redux/store';
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +52,7 @@ function App() {
         <Redirect from="/" to="/eval" noThrow />
         <Evaluator path="eval/" />
         <Selector path="select/" />
-        <Results path="results/" />
+        <Result path="results/" />
       </Router>
     </div>
     </Provider>

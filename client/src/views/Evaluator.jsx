@@ -5,6 +5,7 @@ import { navigate } from '@reach/router';
 import { useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
+import { catRef, usageRef, sizeArr, displayCols } from '../config/categories';
 import MyPaper from '../components/MyPaper';
 
 const useStyles = makeStyles((theme) => ({
@@ -91,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
 const Evaluator = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
     const [type, setType] = useState([]);
     const [cat, setCat] = useState(null);
     const [catOptions, setCatOptions] = useState([]);
@@ -169,10 +171,11 @@ const Evaluator = () => {
             type: 'REQUEST',
             request: {'reqType': 'Evaluate', 'reqBody': reqBody}
         });
-        // navigate('/results',{replace: true, state: {reqBody}});
+        navigate('/results',{replace: true});
     }
 
     return (
+        loading===true ? <p>{loading}</p> :
         <div className={classes.root}>
             <MyPaper>
                 <h2 className={classes.title}>TVS-Diode Evaluation Tool</h2>

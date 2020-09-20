@@ -1,5 +1,5 @@
 from flask import Flask, request, redirect
-from logic import calculate, loadCatDef
+from logicfunc import calculate, loadCatDef
 
 app = Flask(__name__)
 
@@ -15,7 +15,8 @@ def getCatDef():
 def getResults():
     data = request.json
     print(data)
-    if ('ref_ids' not in data) | ('categories' not in data) | (type(data['ref_ids']) != list) | (type(data['categories']) != list | (len(data['ref_ids']) > 0 & len(data['ref_ids']) != len(data['categories']))):
+    if ('ref_ids' not in data) | ('categories' not in data) | (type(data['ref_ids']) is not list) | (type(data['categories']) is not list) | ((len(data['ref_ids']) > 0) & (len(data['ref_ids']) != len(data['categories']))):
+    # if ('ref_ids' not in data) | ('categories' not in data) | (!isinstance(data['ref_ids'], list)) | (!isinstance(data['categories'], list) is not list | (len(data['ref_ids']) > 0 & len(data['ref_ids']) != len(data['categories']))):
         return {'result_status': 'Failure', 'message': 'Invalid input'}
     # input = {'ref_id': data['ref_ids'], 'categories': data['categories']}
     return calculate(data)

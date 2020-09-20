@@ -90,35 +90,35 @@ const Evaluator = () => {
     const [inputError, setInputError] = useState('');
     const errors = {'noRefDeg': 'Enter Reference Designator for this selection', 'packageSize': 'Select Package Size', 'noInput': 'Select either Usage or Max Operating Frequency', 'noCat': 'No category exists for the selections', 'queryError': 'Error occurred while querying database'};
 
-    useEffect(() => {
-        fetch('/getcatdef').then(r => r.json()).then(res => {
-        if (res['result_status'] === 'Failure') {
-            setInputError('queryError');
-        } else {
-            // console.log('status: ', res['result_status']);
-            console.log('data: ', res['data']);
-            let data = res['data'];
-            let ordered = [];
-            for (let i=1; i<data.columns.length; i++) {
-                if (displayCols.includes(data.columns[i])) {
-                    ordered.push({});
-                    ordered[ordered.length-1]['name'] = data.columns[i];
-                    ordered[ordered.length-1]['values'] = [];
-                    for (let j=0; j<data.data.length; j++) {
-                        ordered[ordered.length-1]['values'].push(data.data[j][i]);
-                    }
-                }
-            }
-            // [{name: 'col1', values: [row1, row2, row3]}, {name: col2, values:[]}]
-            console.log(ordered);
-            setResult({'orderedCats': ordered, 'allCats': data.data, 'colList': data.columns});
-            setLoading(false);
-        }
-        })
-        .catch(error => {
-            console.log(error);
-        })
-    }, []);
+    // useEffect(() => {
+    //     fetch('/getcatdef').then(r => r.json()).then(res => {
+    //     if (res['result_status'] === 'Failure') {
+    //         setInputError('queryError');
+    //     } else {
+    //         // console.log('status: ', res['result_status']);
+    //         console.log('data: ', res['data']);
+    //         let data = res['data'];
+    //         let ordered = [];
+    //         for (let i=1; i<data.columns.length; i++) {
+    //             if (displayCols.includes(data.columns[i])) {
+    //                 ordered.push({});
+    //                 ordered[ordered.length-1]['name'] = data.columns[i];
+    //                 ordered[ordered.length-1]['values'] = [];
+    //                 for (let j=0; j<data.data.length; j++) {
+    //                     ordered[ordered.length-1]['values'].push(data.data[j][i]);
+    //                 }
+    //             }
+    //         }
+    //         // [{name: 'col1', values: [row1, row2, row3]}, {name: col2, values:[]}]
+    //         console.log(ordered);
+    //         setResult({'orderedCats': ordered, 'allCats': data.data, 'colList': data.columns});
+    //         setLoading(false);
+    //     }
+    //     })
+    //     .catch(error => {
+    //         console.log(error);
+    //     })
+    // }, []);
     
     const handleUsage = e => {
         setInputError('');
@@ -140,15 +140,16 @@ const Evaluator = () => {
 
     const handleSize = e => {
         setInputError('');
+        let currentCats = [...foundCat];
         let tempCats = [];
         for (let i=0; i<foundCat.length; i++) {
-            if (result['orderedCats'][1]['values'][foundCat[i]-1] === e.target.value) {
+            if (result['orderedCats'][0]['values'][foundCat[i]-1] === e.target.value) {
                 tempCats.push(foundCat[i]);
             }
         };
         if (!tempCats.length) {
             setNoCat(true);
-            setFoundCat([]);
+            setFoundCat(currentCats);
         } else {
             setNoCat(false);
             setFoundCat(tempCats);
@@ -179,11 +180,11 @@ const Evaluator = () => {
             type: 'REQUEST',
             request: {'reqType': 'Select', 'reqBody': reqBody}
         });        
-        // navigate('/results',{replace: true, state: {reqBody, 'cats': result, 'reqType': 'Select'}});
+        navigate('/results',{replace: true});
     }
 
     return (
-        loading===true ? <p>{loading}</p> :
+        // loading===true ? <p>{loading}</p> :
         <div className={classes.root}>
             <MyPaper>
                 <h2 className={classes.title}>TVS-Diode Selection Tool</h2>
@@ -232,7 +233,7 @@ const Evaluator = () => {
                 </FormControl>
                 <div className={`${classes.foundCat} ${classes.alignCenter}`}>
                     {
-                        foundCat.length === 1 ? <><p>Found Category: {foundCat[0]}</p><Button onClick={handleInput} className={classes.button}>Select</Button></> : foundCat.length > 1 ? <><p>Found Categories: {foundCat}</p><Button onClick={handleInput} className={classes.button}>Select All</Button></> : noCat ? <p>No category found. Please change your selections</p> : ''
+                        noCat ? <p>No category found. Please change your selections</p> : foundCat.length === 1 ? <><p>Found Category: {foundCat[0]}</p><Button onClick={handleInput} className={classes.button}>Select</Button></> : foundCat.length > 1 ? <><p>Found Categories: {foundCat.join(', ')}</p><Button onClick={handleInput} className={classes.button}>Select All</Button></> : ''
                     }
                 </div> 
                 <div className={classes.alignRight}>

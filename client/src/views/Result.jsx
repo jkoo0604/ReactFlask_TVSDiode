@@ -81,6 +81,9 @@ const useStyles = makeStyles((theme) => ({
         marginTop: 30,
         marginBottom: 30,
         backgroundColor: colors.darkNeutral60
+    },
+    overflow: {
+        overflow: 'auto'
     }
 }));
 
@@ -89,8 +92,8 @@ const Results = props => {
     const cats = useSelector(state => state.catDef);
     const request = useSelector(state => state.request);
     const finalResult = useSelector(state => state.queryResult);
-    const reqBody = request['reqBody'];
-    const reqType = request['reqType'];
+    const reqBody = !request ? '' : request['reqBody'];
+    const reqType = !request ? '' : request['reqType'];
     const dispatch = useDispatch();
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -155,6 +158,7 @@ const Results = props => {
                     };
                 };
             };
+            // console.log(rows);
             setCsvData(rows);
 
             // prepare data for pdf conversion
@@ -165,7 +169,7 @@ const Results = props => {
                 pdfRows.push([]);
                 if (pdfData[i]['data'].length) {
                     for (let j=0; j<pdfData[i]['data'].length; j++) {
-                        pdfRows[i].push(pdfData[i]['data'][j]);
+                        pdfRows[pdfRows.length-1].push(pdfData[i]['data'][j]);
                     };
                 };
                 pdfText.push('Results for ' + (reqType === 'Select' ? refs[i] : 'Category ' + catList[i]));
@@ -176,11 +180,12 @@ const Results = props => {
 
             // cat def csv
             let catDef = cats['allCats'];
-            let catRows = [...cats['colList']];
+            let catRows = [[...cats['colList']]];
             for (let i=0; i<catDef.length; i++) {
                 let tempRow = [...catDef[i]];
                 catRows.push(tempRow);
             };
+            console.log(catRows);
             setCatCsv(catRows);
 
             // setFinalResult(queryResult);
@@ -207,7 +212,7 @@ const Results = props => {
         handleClose();
         let doc = new jsPDF();
         let finalY = doc.lastAutoTable.finalY || 10;
-        let len = queryResult['data']['ref_id'].length;
+        let len = finalResult['data']['ref_id'].length;
 
         for (let i=0; i<len; i++) {
             doc.text(pdfData['text'][i], 14, finalY + 15);
@@ -223,12 +228,12 @@ const Results = props => {
     };
 
     const handleBack = () => {
-        dispatch({
-            type: 'RESET',
-            queryResult: null,
-            request: null
-        });
-        navigate('/', {replace: true});
+        // dispatch({
+        //     type: 'RESET',
+        //     queryResult: null,
+        //     request: null
+        // });
+        navigate('/select', {replace: true});
     };
 
     return (
@@ -246,11 +251,11 @@ const Results = props => {
                     </Menu>
                 </div>
                 <h2 className={classes.title}>{reqType === 'Select' ? 'Selection ' : 'Evaluation '} Result</h2>
-                <p className={classes.error}>
+                {/* <p className={classes.error}>
                     {
                         inputError !== '' ? errors[inputError] : ''
                     }
-                </p>
+                </p> */}
                 {
                     finalResult['data']['cat_id'].map((cat, idx) => (
                         <div key = {idx} className={classes.resultDiv}>
@@ -260,11 +265,13 @@ const Results = props => {
                                     Category {cat}
                                 </AccordionSummary>
                                 <AccordionDetails>
-                                    <MyTable columns={cats[colList]} data={cats[allCats]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 75}} />
+                                    <div className={classes.overflow}>
+                                    <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50, backgroundColor: colors.backgroundDark}} />
+                                    </div>
                                 </AccordionDetails>
                             </Accordion>
                             {
-                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 100}} />
+                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50}} /></div>
                             }
                             <Divider light classes={{root: classes.divider}}/>
                         </div>
