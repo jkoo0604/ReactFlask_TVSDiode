@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         margin: 'auto',
-        backgroundColor: colors.darkBackground,
+        backgroundColor: colors.background,
         minHeight: '100vh',
         alignContent: 'center',
         justifyContent: 'center'
@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
     card: {
         width: '80%',
         alignSelf: 'center',
-        backgroundColor: colors.darkBackgroundCard,
+        backgroundColor: colors.backgroundCard,
         padding: 15
     },
     title: {
-        color: colors.darkNeutral100
+        color: colors.neutral80
     },
     subtext: {
-        color: colors.darkNeutral60,
+        color: colors.neutral80,
     },
     alignRight: {
         justifyContent: 'flex-end',
@@ -47,10 +47,10 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between'
     },
     button: {
-        color: colors.darkAction
+        color: colors.action
     },
     backButton: {
-        color: colors.darkActionDelete
+        color: colors.actionAlert
     },
     error: {
         color: colors.darkActionDelete,
@@ -59,14 +59,14 @@ const useStyles = makeStyles((theme) => ({
     paper: {
         width: '80%',
         alignContent: 'center',
-        backgroundColor: colors.darkBackgroundCard,
+        backgroundColor: colors.backgroundCard,
     },
     container: {
         maxHeight: 440,
         marginTop: 20
     },
     header: {
-        backgroundColor: colors.darkBackground
+        backgroundColor: colors.background
     },
     cell: {
         color: colors.darkNeutral100,
