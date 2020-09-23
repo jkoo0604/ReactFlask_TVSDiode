@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Card, CardActions, CardContent, Typography, Grid, TextField, Button } from '@material-ui/core';
+import { Select, FormControl, InputLabel, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
+import { useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
+import { catRef, usageRef, sizeArr, displayCols } from '../config/categories';
+import MyPaper from '../components/MyPaper';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -91,25 +94,43 @@ const Input = () => {
     }
 
     return (
-        <Grid container className={classes.root}>
-            <Card className={classes.card}>
-                <CardContent>
-                    <Typography className={classes.title} gutterBottom variant="h4">
-                        Enter Reference IDs
-                    </Typography>
-                    <Typography className={classes.subtext} variant="subtitle2">
-                        Enter multiple IDs separated by a comma or a new line
-                    </Typography>
-                    <Typography className={classes.error} variant="subtitle2">
-                        { inputError ? 'Enter at least one Reference ID' : '' }
-                    </Typography>
-                    <TextField className={classes.input} label="Reference IDs" multiline required rows={5} value={refNums} onChange={(e) => setRefNums(e.target.value)} variant="outlined"/>
-                </CardContent>
-                <CardActions className={classes.alignRight}>
-                    <Button size="small" className={classes.button} onClick={(e) => handleInput(e)}>Continue</Button>
-                </CardActions>
-            </Card>
-        </Grid>
+        loading===true ? <p>{loading}</p> :
+        <div className={classes.root}>
+            <MyPaper>
+                <h2 className={classes.title}>TVS-Diode Evaluation Tool</h2>
+                <p className={classes.subtext}>Select evaluation type</p>
+                <p className={classes.error}>
+                    {
+                        inputError !== '' ? errors[inputError] : ''
+                    }
+                </p>
+                <FormControl className={classes.formControl}>
+                    <InputLabel shrink>Evaluation Type</InputLabel>
+                    <Select multiple native value={type} onChange={handleChange} className={classes.input} inputProps={{classes: {root: classes.inputBackground,  select: classes.inputColor}}}> 
+                        <option value={'Formal'} className={classes.option}>Formal</option>
+                        <option value={'2nd Source'} className={classes.option}>2nd Source</option>
+                        <option value={'Custom'} className={classes.option}>Custom</option>
+                    </Select>
+                </FormControl>
+                {
+                    !catOptions.length ? <></> :
+                    <FormControl className={classes.formControl} disabled={!catOptions.length ? true : false}>
+                        <InputLabel shrink>2nd Source Category</InputLabel>
+                        <Select native value={cat || ''} onChange={handleCatSelect} className={classes.input} inputProps={{classes: {icon: classes.inputColor, select: classes.inputBackground}}}>
+                            <option value="">Select</option>
+                            {
+                                catOptions.map((category) => (
+                                    <option key={category} value={category}>{category}</option>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+                }
+                <div className={classes.alignRight}>
+                    <Button size="small" className={classes.button} onClick={handleSubmit}>Submit</Button>
+                </div>
+            </MyPaper>
+        </div>
     )
 }
 

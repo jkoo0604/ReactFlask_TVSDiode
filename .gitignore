@@ -4,6 +4,8 @@
 *.numbers
 mysqlconnection.py
 config/
+*.zip
+screenshots/
 
 # dependencies
 /node_modules

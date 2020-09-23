@@ -116,13 +116,27 @@ const Results = props => {
             } else {
                 queryResult = {'message': 'all results', 'data': res['results_data'], 'output': res['output_data']};
             };
-            console.log(queryResult);
-
-            // prepare data for csv conversion
+            
+            let outputData = queryResult['output']['results'];
             let data = queryResult['data']['results'];
             let pdfData = queryResult['output']['results'];
             let refs = queryResult['data']['ref_id'];
             let catList = queryResult['data']['cat_id'];
+
+            // convert datetime into JS
+            // finalResult['output']['results'][idx]['data']
+            for (let i=0; i<data.length; i++) {
+                if (data[i] === '') continue;
+                for (let j=0; j<data[i]['data'].length; j++) {
+                    let dateStr = new Date(+data[i]['data'][j][data[i]['data'][j].length-1]);
+                    data[i]['data'][j][data[i]['data'][j].length-1] = dateStr.toLocaleDateString();
+                    outputData[i]['data'][j][outputData[i]['data'][j].length-1] = dateStr.toLocaleDateString();
+                };
+            };
+            
+            console.log(queryResult);
+
+            // prepare data for csv conversion
             let columns = [];
             let pdfPrep = {};
             
@@ -233,14 +247,14 @@ const Results = props => {
         //     queryResult: null,
         //     request: null
         // });
-        navigate('/select', {replace: true});
+        navigate(request['reqType'] === 'Select' ? '/select' : '/eval', {replace: true});
     };
 
     return (
         loading===true ? <p>{loading}</p> :
         <>      
         <div className={classes.root}>
-            <MyPaper>
+            <MyPaper width={'90%'}>
                 <div className={classes.alignBetween}>
                     <Button size="small" className={classes.backButton} onClick={handleBack}>Reset</Button>
                     <IconButton className={classes.button} onClick={handleClick}><GetApp /></IconButton>
@@ -271,7 +285,7 @@ const Results = props => {
                                 </AccordionDetails>
                             </Accordion>
                             {
-                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50}} /></div>
+                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 80}} /></div>
                             }
                             <Divider light classes={{root: classes.divider}}/>
                         </div>
