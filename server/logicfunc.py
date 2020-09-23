@@ -120,6 +120,7 @@ def scoreTest(test_type, cat_def, components, score_ref, pf_test):
 def calculate(input):
     try:
         conn = pymysql.connect(host = 'localhost', user = user, password = password, db = db, charset = 'utf8mb4')
+        outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']
         results = {'ref_id': [], 'cat_id': [], 'results': []} 
         output_results = {'ref_id': [], 'cat_id': [], 'results': []} 
         for i in input['ref_ids']:
@@ -156,7 +157,13 @@ def calculate(input):
                 components['Score'] = ''
                 components['Rank'] = ''
                 components['Evaluated'] = int(datetime.now().strftime('%s%f'))/1000
-                output = components[['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']].copy()
+
+                if (input['dropFail'] == True) & (components['Status'].iloc[0] == 'Fail'):
+                    results['results'].append('')
+                    output_results['results'].append('')
+                    continue
+
+                output = components[outputCols].copy()
                 results['results'].append(components.to_dict(orient='split'))
                 output_results['results'].append(output.to_dict(orient='split'))
                 continue
@@ -174,7 +181,14 @@ def calculate(input):
             del sorted_components['id']
             sorted_components['Evaluated'] = int(datetime.now().strftime('%s%f'))/1000
 
-            output = sorted_components[['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']].copy()
+            if input['dropFail'] == True:
+                sorted_components.drop(sorted_components[sorted_components['Status'] == 'Fail'].index, inplace=True)
+                if sorted_components.shape[0] == 0:
+                    results['results'].append('')
+                    output_results['results'].append('')
+                    continue
+
+            output = sorted_components[outputCols].copy()
 
             results['results'].append(sorted_components.to_dict(orient='split'))
             output_results['results'].append(output.to_dict(orient='split'))

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Router, Redirect, navigate } from '@reach/router';
 import { Provider } from 'react-redux';
-import { Tab, Tabs } from '@material-ui/core';
+// import { Tab, Tabs } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import './App.css';
 
 import colors from './config/colors';
-import Results from './views/Results';
-import Evaluator from './views/Evaluator';
-import Selector from './views/Selector';
+// import Results from './views/Results';
+// import Evaluator from './views/Evaluator';
+// import Selector from './views/Selector';
+import Start from './views/Start';
 import Result from './views/Result';
 import store from './redux/store';
 
@@ -32,26 +33,27 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
-    const [value, setValue] = useState(0);
-    const paths = ['/eval', '/select'];
+    // const [value, setValue] = useState(0);
+    // const paths = ['/eval', '/select'];
 
-    const handleChange = (e, newVal) => {
-        console.log(newVal);
-        setValue(newVal);
-        navigate(paths[newVal]);
-    };
+    // const handleChange = (e, newVal) => {
+    //     console.log(newVal);
+    //     setValue(newVal);
+    //     navigate(paths[newVal]);
+    // };
 
   return (
     <Provider store={store}>
     <div className={`App, ${classes.root}`}>
-      <Tabs value={value} onChange={handleChange} className={classes.wrapper} TabIndicatorProps={{className: classes.indicator}} centered>
+      {/* <Tabs value={value} onChange={handleChange} className={classes.wrapper} TabIndicatorProps={{className: classes.indicator}} centered>
           <Tab label='Evaluator' />
           <Tab label='Selector' />
-      </Tabs>
+      </Tabs> */}
       <Router>
-        <Redirect from="/" to="/eval" noThrow />
-        <Evaluator path="eval/" />
-        <Selector path="select/" />
+        <Redirect from="/" to="/input" noThrow />
+        <Start path="input/" />
+        {/* <Evaluator path="eval/" />
+        <Selector path="select/" /> */}
         <Result path="results/" />
       </Router>
     </div>
