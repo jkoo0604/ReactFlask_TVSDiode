@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         margin: 'auto',
-        backgroundColor: colors.background,
+        backgroundColor: colors.backgroundSite,
         minHeight: '100vh',
         alignContent: 'center',
         justifyContent: 'center'
@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
     card: {
         width: '80%',
         alignSelf: 'center',
-        backgroundColor: colors.backgroundCard,
+        backgroundColor: colors.backgroundTable,
         padding: 15
     },
     title: {
-        color: colors.neutral80
+        color: colors.textNormal
     },
     subtext: {
-        color: colors.neutral80,
+        color: colors.textNormal,
     },
     alignRight: {
         justifyContent: 'flex-end',
@@ -47,26 +47,28 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'space-between'
     },
     button: {
-        color: colors.action
+        color: colors.textLabel,
+        backgroundColor: colors.backgroundButton
     },
     backButton: {
-        color: colors.actionAlert
+        color: colors.textLabel,
+        backgroundColor: colors.backgroundButton
     },
     error: {
-        color: colors.darkActionDelete,
+        color: colors.textError,
         marginBottom: 30
     },
     paper: {
         width: '80%',
         alignContent: 'center',
-        backgroundColor: colors.backgroundCard,
+        backgroundColor: colors.backgroundSite,
     },
     container: {
         maxHeight: 440,
         marginTop: 20
     },
     header: {
-        backgroundColor: colors.background
+        backgroundColor: colors.backgroundTable
     },
     cell: {
         color: colors.darkNeutral100,
@@ -84,6 +86,10 @@ const useStyles = makeStyles((theme) => ({
     },
     overflow: {
         overflow: 'auto'
+    },
+    summary: {
+        backgroundColor: colors.backgroundAccordion,
+        color: colors.textLabel
     }
 }));
 
@@ -110,6 +116,7 @@ const Results = props => {
         fetch('/getresults', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(reqBody)}).then(r => r.json()).then(res => {
             let queryResult = {};
             if (res['result_status'] === 'Failure') {
+                console.log(res);
                 setError(true);
                 setLoading(false);
                 return;
@@ -119,7 +126,7 @@ const Results = props => {
             
             let outputData = queryResult['output']['results'];
             let data = queryResult['data']['results'];
-            let pdfData = queryResult['output']['results'];
+            let pdfDataRes = queryResult['output']['results'];
             let refs = queryResult['data']['ref_id'];
             let catList = queryResult['data']['cat_id'];
 
@@ -147,7 +154,7 @@ const Results = props => {
                     } else {
                         columns = data[i]['columns'];
                     };
-                    pdfPrep['head'] = [pdfData[i]['columns']];
+                    pdfPrep['head'] = [pdfDataRes[i]['columns']];
                     break;
                 };
             };
@@ -179,11 +186,11 @@ const Results = props => {
             let pdfRows = [];
             let pdfText = [];
             for (let i=0; i<catList.length; i++) {
-                if (pdfData[i] === '') continue;
+                if (pdfDataRes[i] === '') continue;
                 pdfRows.push([]);
-                if (pdfData[i]['data'].length) {
-                    for (let j=0; j<pdfData[i]['data'].length; j++) {
-                        pdfRows[pdfRows.length-1].push(pdfData[i]['data'][j]);
+                if (pdfDataRes[i]['data'].length) {
+                    for (let j=0; j<pdfDataRes[i]['data'].length; j++) {
+                        pdfRows[pdfRows.length-1].push(pdfDataRes[i]['data'][j]);
                     };
                 };
                 pdfText.push('Results for ' + (reqType === 'Select' ? refs[i] : 'Category ' + catList[i]));
@@ -226,7 +233,7 @@ const Results = props => {
         handleClose();
         let doc = new jsPDF();
         let finalY = doc.lastAutoTable.finalY || 10;
-        let len = finalResult['data']['ref_id'].length;
+        let len = pdfData['text'].length;
 
         for (let i=0; i<len; i++) {
             doc.text(pdfData['text'][i], 14, finalY + 15);
@@ -247,7 +254,7 @@ const Results = props => {
         //     queryResult: null,
         //     request: null
         // });
-        navigate(request['reqType'] === 'Select' ? '/select' : '/eval', {replace: true});
+        navigate('/', {replace: true});
     };
 
     return (
@@ -264,7 +271,7 @@ const Results = props => {
                         <MenuItem disabled={catCsv.length === 0}><CSVLink data={catCsv} filename={"catdef.csv"} onClick={handleClose}>Download category definitions in CSV</CSVLink></MenuItem>
                     </Menu>
                 </div>
-                <h2 className={classes.title}>{reqType === 'Select' ? 'Selection ' : 'Evaluation '} Result</h2>
+                <h2 className={classes.title}>{reqType === 'Evaluate' ? 'Evaluation ' : 'Selection '} Result</h2>
                 {/* <p className={classes.error}>
                     {
                         inputError !== '' ? errors[inputError] : ''
@@ -275,7 +282,7 @@ const Results = props => {
                         <div key = {idx} className={classes.resultDiv}>
                             { reqType === 'Select' ? <h4 className={classes.subtext}>{finalResult['data']['ref_id'][idx]}</h4> : ''}
                             <Accordion>
-                                <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+                                <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded />}>
                                     Category {cat}
                                 </AccordionSummary>
                                 <AccordionDetails>

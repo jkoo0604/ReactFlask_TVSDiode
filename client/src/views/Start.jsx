@@ -29,7 +29,7 @@ const Start = () => {
             console.log('data: ', res['data']);
             let data = res['data'];
             let ordered = [];
-            for (let i=1; i<data.columns.length; i++) {
+            for (let i=0; i<data.columns.length; i++) {
                 if (displayCols.includes(data.columns[i])) {
                     ordered.push({});
                     ordered[ordered.length-1]['name'] = data.columns[i];
