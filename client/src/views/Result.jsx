@@ -13,6 +13,7 @@ import MyPaper from '../components/MyPaper';
 import MyTable from '../components/MyTable';
 import MyButton from '../components/MyButton';
 import MyHeader from '../components/MyHeader';
+import MyAccordion from '../components/MyAccordion';
 
 const useStyles = makeStyles((theme) => ({
     loading: {
@@ -23,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh',
         paddingTop: '200px'
     },
+    circle: {
+        color: colors.backgroundButton,
+        // backgroundColor: colors.backgroundButton
+    },
     root: {
         flexGrow: 1,
         margin: 'auto',
@@ -32,13 +37,13 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center'
     },
     content: {
-        width: '80%',
+        width: '87%',
         margin: 'auto',
         padding: '30px'
     },
     header: {
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     headerText: {
         width: '60%'
@@ -56,6 +61,31 @@ const useStyles = makeStyles((theme) => ({
     desc: {
         textAlign: 'left',
     },
+    resultDiv: {
+        marginBottom: '25px'
+    },
+    resultHeader: {
+        backgroundColor: colors.borderTable,
+        color: colors.textNormal,
+        fontWeight: 'bold',
+        fontSize: 16,
+        padding: '10px'
+    },
+    resultBody: {
+        maxHeight: '30rem',
+        overflow: 'auto',
+        padding: '8px 10px',
+        backgroundColor: colors.backgroundTable
+    },
+    divider: {
+        height: 10,
+        borderBottomColor: colors.borderTable,
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        opacity: '0.5',
+        marginBottom: '8px'
+    },
+
     card: {
         width: '80%',
         alignSelf: 'center',
@@ -101,14 +131,6 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: 'solid',
         borderBottomWidth: 0.5,
         borderBottomColor: colors.darkNeutral40,
-    },
-    resultDiv: {
-
-    },
-    divider: {
-        marginTop: 30,
-        marginBottom: 30,
-        backgroundColor: colors.darkNeutral60
     },
     overflow: {
         overflow: 'auto'
@@ -284,7 +306,7 @@ const Results = props => {
     };
 
     return (
-        loading===true ? <div className={classes.loading}><CircularProgress /></div> :
+        loading===true ? <div className={classes.loading}><CircularProgress size={65} thickness={5} className={classes.circle}/></div> :
         <>      
         <div className={classes.root}>
             <MyHeader title={'TVS-Diode Tool'} />
@@ -321,22 +343,29 @@ const Results = props => {
                 </p> */}
                 {
                     finalResult['data']['cat_id'].map((cat, idx) => (
-                        <div key = {idx} className={classes.resultDiv}>
-                            { reqType === 'Select' ? <h4 className={classes.subtext}>{finalResult['data']['ref_id'][idx]}</h4> : ''}
-                            <Accordion>
-                                <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded style={{fill: colors.textLabel}}/>}>
-                                    Category {cat}
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <div className={classes.overflow}>
-                                    <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50, backgroundColor: colors.backgroundDark}} />
-                                    </div>
-                                </AccordionDetails>
-                            </Accordion>
-                            {
-                                finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={1} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 80}} /></div>
-                            }
-                            <Divider light classes={{root: classes.divider}}/>
+                        <div key={idx} className={classes.resultDiv}>
+                            <div className={classes.resultHeader}>
+                                {`Category ${cat}`}
+                            </div>
+                            <div className={classes.resultBody}>
+                                {/* <Accordion>
+                                    <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded style={{fill: colors.textLabel}}/>}>
+                                        Category {cat}
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <div className={classes.overflow}>
+                                        <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50, backgroundColor: colors.backgroundDark}} />
+                                        </div>
+                                    </AccordionDetails>
+                                </Accordion> */}
+                                <MyAccordion>
+                                    <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 12, textAlign: 'center'}} thStyle={{minWidth: 90, backgroundColor: colors.backgroundDark, fontSize: 12, verticalAlign: 'bottom'}} />
+                                </MyAccordion>
+                                <div className={classes.divider} /> 
+                                {
+                                    finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 14, textAlign: 'center'}} thStyle={{minWidth: 90, fontSize: 14}} /></div>
+                                }
+                            </div>
                         </div>
                     ))
                 }
