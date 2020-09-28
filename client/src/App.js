@@ -15,20 +15,20 @@ import store from './redux/store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-      flexGrow: 1,
+      backgroundColor: colors.backgroundSite
   },
-  indicator: {
-    backgroundColor: colors.neutral60,
-    height: '7px',
-    top: '53px'
-  },
-  wrapper: {
-    height: '60px',
-    background: colors.background,
-    borderBottomColor: colors.neutral100,
-    borderBottomStyle: 'solid',
-    borderBottomWidth: 1
-  }
+  // indicator: {
+  //   backgroundColor: colors.neutral60,
+  //   height: '7px',
+  //   top: '53px'
+  // },
+  // wrapper: {
+  //   height: '60px',
+  //   background: colors.background,
+  //   borderBottomColor: colors.neutral100,
+  //   borderBottomStyle: 'solid',
+  //   borderBottomWidth: 1
+  // }
 }));
 
 function App() {

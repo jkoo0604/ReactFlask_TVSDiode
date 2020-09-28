@@ -282,7 +282,7 @@ const Results = props => {
                         <div key = {idx} className={classes.resultDiv}>
                             { reqType === 'Select' ? <h4 className={classes.subtext}>{finalResult['data']['ref_id'][idx]}</h4> : ''}
                             <Accordion>
-                                <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded />}>
+                                <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded style={{fill: colors.textLabel}}/>}>
                                     Category {cat}
                                 </AccordionSummary>
                                 <AccordionDetails>
