@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup, Select, FormControl, InputLabel, Button, Checkbox, FormControlLabel, TextField, FormHelperText, FormLabel } from '@material-ui/core';
+import { Radio, RadioGroup, Select, MenuItem, FormControl, InputLabel, Button, Checkbox, FormControlLabel, TextField, FormHelperText, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
 import { useSelector, useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
 import { catRef, usageRef, sizeArr, displayCols } from '../config/categories';
-import MyPaper from '../components/MyPaper';
 import MyToggle from '../components/MyToggle';
 import MyHeader from '../components/MyHeader';
+import MyButton from '../components/MyButton';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        
+    root: {        
         margin: 'auto',
         backgroundColor: colors.backgroundSite,
         minHeight: '100vh',
@@ -20,73 +19,89 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         textAlign: 'center'
     },
-    card: {
-        width: '80%',
-        alignSelf: 'center',
-        // padding: 15
-    },
-    title: {
-        color: colors.textNormal
-    },
-    subtext: {
-        color: colors.textNormal,
-    },
-    input: {
-        width: 350,
-        overflow: 'auto',
-        // "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        //     borderColor: colors.darkNeutral60
-        // },
-        // "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        // borderColor: colors.darkNeutral100
-        // },
-        // "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        // borderColor: colors.darkActionLight
-        // },
-        // "& .MuiOutlinedInput-input": {
-        // color: colors.darkNeutral100
-        // },
-        // "&:hover .MuiOutlinedInput-input": {
-        // color: colors.darkNeutral100
-        // },
-        // "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-        // color: colors.darkNeutral100
-        // },
-        // "& .MuiInputLabel-outlined": {
-        // color: colors.darkNeutral60
-        // },
-        // "&:hover .MuiInputLabel-outlined": {
-        // color: colors.darkNeutral100
-        // },
-        // "& .MuiInputLabel-outlined.Mui-focused": {
-        // color: colors.darkActionLight
-        // }
-    },
-    inputColor: {
-        color: colors.textNormal,
-        overflow: 'auto'
-    },
-    alignRight: {
-        justifyContent: 'flex-end',
-    },
-    button: {
-        color: colors.textLabel,
-        backgroundColor: colors.backgroundButton
+    content: {
+        width: '60%',
+        margin: 'auto',
+        padding: '30px'
     },
     error: {
         color: colors.textError,
-        marginBottom: 30
-    },
-    foundCat: {
-        color: colors.textConfirm
-    },
-    evalInput: {
-        width: 350,
-        overflow: 'auto',
+        height: 25,
+        fontSize: 14
     },
     toggle: {
         display: 'flex',
         justifyContent: 'center'
+    },
+    title: {
+        textAlign: 'left',
+        fontSize: 18,
+        fontWeight: 'bolder',
+        padding: '0px 30px'
+    },
+    desc: {
+        textAlign: 'left',
+        padding: '0px 30px'
+    },
+    evalForm: {
+        margin: 'auto',
+        padding: '0px 30px',
+        width: '100%'
+    },
+    evalInput: {
+        // width: '45%',
+        // overflow: 'auto',
+    },
+    selectForm: {
+        margin: 'auto',
+        padding: '0px 30px',
+        width: '100%',
+    },
+    selectInput: {
+        width: '100%'
+    },
+    selectCheck: {
+        width: '100%',
+        display: 'block',
+        textAlign: 'right'
+    },
+    dropdownWrapper: {
+        display: 'flex',
+    },
+    dropdown: {
+        width: '50%',
+        display: 'inline-block',
+    },
+    formControl: {
+        width: '95%',
+    },
+    inputStyle: {
+        backgroundColor: colors.backgroundTable,
+        textAlign: 'left',
+        borderRadius: 5
+    },
+    divider: {
+        height: 20,
+        borderBottomColor: colors.backgroundAccordion,
+        borderBottomWidth: '1px',
+        borderBottomStyle: 'solid',
+        opacity: '0.2',
+        marginBottom: '25px'
+    },
+    textLeft: {
+        textAlign: 'left'
+    },
+    textRight: {
+        textAlign: 'right'
+    },
+    foundCat: {
+        color: colors.textConfirm,
+        height: '35px'
+    },
+    foundCatText: {
+        fontSize: 12,
+        margin: 0,
+        padding: 0
     }
 }));
 
@@ -129,6 +144,8 @@ const Input = () => {
             setCatOptions([]);
         };
         // setType 
+        setInputError('');
+        setSelectedCats([]);
         setType(newVal);
     };
 
@@ -150,14 +167,17 @@ const Input = () => {
     };
 
     const handleSelectUsage = e => {
+        console.log('onchange');
         let tempCats = [];
         for (let i=0; i<catRef[e.target.value].length; i++) {
             tempCats.push(result['orderedCats'][1]['values'][catRef[e.target.value][i]-1]);
         };
         let tempCatsDeduped = ([...new Set(tempCats)]);
+        console.log(tempCatsDeduped);
         if (tempCatsDeduped.length === 1) {
             setSize(tempCatsDeduped[0]);
         };
+
         setSizeOptions(tempCatsDeduped);
         setInputError('');
         setMaxFreq('');
@@ -200,7 +220,7 @@ const Input = () => {
     };
 
     const handleSelectSize = e => {
-        setInputError('');
+        console.log('onchange size');
         let tempCats = [];
         for (let i=0; i<foundCat.length; i++) {
             if (result['orderedCats'][1]['values'][foundCat[i]-1] === e.target.value) {
@@ -214,6 +234,8 @@ const Input = () => {
             setNoCat(false);
             setSelectedCats(tempCats);
         };
+
+        setInputError('');
         setSize(e.target.value);
     };
 
@@ -270,107 +292,121 @@ const Input = () => {
     
 
     return (
-        // loading===true ? <p>{loading}</p> :
         <div className={classes.root}>
             <MyHeader title={'TVS-Diode Tool'} />
-            <div className={classes.card}>
-            {/* <MyPaper className={classes.card}> */}
-                {/* <h2 className={classes.title}>TVS-Diode Tool</h2>
-                <p className={classes.subtext}>Select Tool Type</p> */}
+            <div className={classes.content}>
+                <div className={classes.toggle}>
+                    <MyToggle type={type} handleTypeChange={handleTypeChange} position={'left'} value={'Evaluate'} />
+                    <MyToggle type={type} handleTypeChange={handleTypeChange} position={'right'} value={'Select'} />
+                </div>
+                <p className={classes.title}>{type}</p>
+                <p className={classes.desc}>
+                    {
+                        type === 'Evaluate' ? 
+                        <>Select <span style={{fontWeight: 'bold'}}>formal</span> to view components in all categories for evaluation. Choose a <span style={{fontWeight: 'bold'}}>2nd source category</span> to limit results to a single category.</> :
+                        <>Choose <span style={{fontWeight: 'bold'}}>usage type</span> or <span style={{fontWeight: 'bold'}}>maximum operating frequency</span> to look up components in the category matching the criteria.</>
+                    }
+                </p>
                 <p className={classes.error}>
                     {
                         inputError !== '' ? errors[inputError] : ''
                     }
                 </p>
-                <div className={classes.toggle}>
-                    <MyToggle type={type} handleTypeChange={handleTypeChange} position={'left'} value={'Evaluate'} />
-                    <MyToggle type={type} handleTypeChange={handleTypeChange} position={'right'} value={'Select'} />
-                </div>
-                {/* <FormControl component='fieldset' className={classes.formControl}>
-                    <FormLabel component='legend'>Tool Type</FormLabel>
-                    <RadioGroup name='type' value={type} onChange={handleTypeChange}>
-                        <FormControlLabel value='Evaluate' control={<Radio color='default' />} label='Evaluate' />
-                        <FormControlLabel value='Select' control={<Radio color='default' />} label='Select' />
-                    </RadioGroup>
-                </FormControl> */}
                 {
                     type === '' ? <></> : type === 'Evaluate' ? 
                     <div className={classes.evalForm}>
-                        <FormControl className={classes.formControl}>
-                            {/* <InputLabel shrink>Evaluation Type</InputLabel> */}
-                            <p>Evaluation Type</p>
-                            <select size={3} value={evalType} onChange={handleEvalChange} className={classes.evalInput} > 
-                                <option hidden disabled value=''>Select</option>
-                                <option value={'Formal'} className={classes.option}>Formal</option>
-                                <option value={'2nd Source'} className={classes.option}>2nd Source</option>
-                                <option value={'Custom'} className={classes.option}>Custom</option>
-                            </select>
+                        <div className={classes.dropdownWrapper}>
+                        <div className={`${classes.dropdown} ${classes.textLeft}`}>
+                        <FormControl required variant='filled' className={classes.formControl} error={inputError === 'noEvalInput' || inputError === 'custom'}>
+                            <InputLabel shrink>Evaluation Type</InputLabel>
+                            <Select value={evalType} onChange={handleEvalChange} className={classes.evalInput}inputProps={{classes: {root: classes.inputStyle}}}>
+                                <MenuItem value=""><em>Select</em></MenuItem>
+                                <MenuItem value={'Formal'}>Formal</MenuItem>
+                                <MenuItem value={'2nd Source'}>2nd Source</MenuItem>
+                                <MenuItem value={'Custom'}>Custom</MenuItem>
+                            </Select>
+                            <FormHelperText>Required</FormHelperText>
                         </FormControl>
+                        </div>
+                        <div className={`${classes.dropdown} ${classes.textRight}`}>
                         {
-                            !catOptions.length ? <></> :
-                            <FormControl className={classes.formControl} disabled={!catOptions.length ? true : false}>
+                            !catOptions.length ? <div className={classes.formControl}></div> :
+                            <FormControl variant='filled' className={classes.formControl} disabled={!catOptions.length ? true : false} error={inputError === 'nullCat'}>
                                 <InputLabel shrink>2nd Source Category</InputLabel>
-                                <Select native value={cat || ''} onChange={handleEvalCatSelect} className={classes.input} inputProps={{classes: {icon: classes.inputColor, select: classes.inputBackground}}}>
-                                    <option value="">Select</option>
+                                <Select value={cat || ''} onChange={handleEvalCatSelect} className={classes.evalInput} inputProps={{classes: {root: classes.inputStyle}}}>
+                                    <MenuItem value=""><em>Select</em></MenuItem>
                                     {
                                         catOptions.map((category) => (
-                                            <option key={category} value={category}>{category}</option>
+                                            <MenuItem key={category} value={category}>{category}</MenuItem>
                                         ))
                                     }
                                 </Select>
                             </FormControl>
                         }
+                        </div>
+                        </div>
                     </div> :
                     <div className={classes.selectForm}>
-                        <TextField className={classes.input} label="Reference Designator" required value={refDeg} onChange={(e) => setRefDeg(e.target.value)} variant="outlined"/>
-                        <FormControlLabel control={<Checkbox checked={dropFail} onChange={() => setDropFail(!dropFail)}/>} label={'Exclude failed components'} />
-                        <FormControl className={classes.formControl}>
+                        <TextField className={classes.selectInput} label="Reference Designator" required value={refDeg} onChange={(e) => setRefDeg(e.target.value)} variant="filled" InputProps={{classes: {root: classes.inputStyle}}} error={inputError === 'noRefDeg'} helperText='Required' />
+                        <FormControlLabel control={<Checkbox checked={dropFail} onChange={() => setDropFail(!dropFail)} fontSize='small' color='default'/>} label={'Exclude failed components'} size='small' className={classes.selectCheck} />
+
+                        <div className={classes.dropdownWrapper}>
+                        <div className={`${classes.dropdown} ${classes.textLeft}`}>
+                        <FormControl className={classes.formControl} variant='filled'>
                             <InputLabel>Usage Type</InputLabel>
-                            <Select value={usage} onChange={handleSelectUsage} className={classes.input}> 
-                                <option value="">Select</option>
+                            <Select value={usage} onChange={handleSelectUsage} className={classes.evalInput} inputProps={{classes: {root: classes.inputStyle}}}> 
+                                <MenuItem value=""><em>Select</em></MenuItem>
                                 {
                                     Object.keys(catRef).map((item, i) => (
-                                        <option key={i} value={item}>{item}</option>
+                                        <MenuItem key={i} value={item}>{item}</MenuItem>
                                     ))
                                 }
                             </Select>
                             <FormHelperText>If unknown, select Max Operating Frequency</FormHelperText>
                         </FormControl>
-                        <FormControl className={classes.formControl}>
+                        </div>
+                        <div className={`${classes.dropdown} ${classes.textRight}`}>
+                        <FormControl className={classes.formControl} variant='filled'>
                             <InputLabel>Max Operating Frequency</InputLabel>
-                            <Select value={maxFreq} onChange={handleSelectFreq} className={classes.input}> 
-                                <option value="">Select</option>
+                            <Select value={maxFreq} onChange={handleSelectFreq} className={classes.evalInput} inputProps={{classes: {root: classes.inputStyle}}}> 
+                                <MenuItem value=""><em>Select</em></MenuItem>
                                 {
                                     Object.keys(usageRef).map((item, i) => (
-                                        <option key={i} value={item}>{item}</option>
+                                        <MenuItem key={i} value={item}>{item}</MenuItem>
                                     ))
                                 }
                             </Select>
                             <FormHelperText>Optional</FormHelperText>
                         </FormControl>
-                        <FormControl className={classes.formControl}>
+                        </div>
+                        </div>
+                        <div className={classes.dropdownWrapper}>
+                        <div className={`${classes.dropdown} ${classes.textLeft}`}>
+                        <FormControl className={classes.formControl} variant='filled'>
                             <InputLabel>Package Size</InputLabel>
-                            <Select value={size} onChange={handleSelectSize} className={classes.input}> 
-                                <option value="">Select</option>
+                            <Select value={size} onChange={handleSelectSize} className={classes.evalInput} inputProps={{classes: {root: classes.inputStyle}}}> 
+                                <MenuItem value=""><em>Select</em></MenuItem>
                                 {
                                     sizeOptions.map((item, i) => (
-                                        <option key={i} value={item}>{item}</option>
+                                        <MenuItem key={i} value={item}>{item}</MenuItem>
                                     ))
                                 }
                             </Select>
                             <FormHelperText>Optional</FormHelperText>
                         </FormControl>
+                        </div>
+                        </div>
                         <div className={`${classes.foundCat} ${classes.alignCenter}`}>
                             {
-                                noCat ? <p>No category found. Please change your selections</p> : selectedCats.length === 1 ? <p>Found Category: {selectedCats[0]}</p> : (foundCat.length > 1 && !selectedCats.length) ? <><p>Possible Categories: {foundCat.join(', ')}</p><p>Select Package Size</p></> : ''
+                                noCat ? <p><span style={{fontWeight: 'bold', color: colors.textError}}>No matching category found. Please change your selections</span></p> : selectedCats.length === 1 ? <p>Matching Category: <span style={{fontWeight: 'bold'}}>{selectedCats[0]}</span></p> : (foundCat.length > 1 && !selectedCats.length) ? <><p>Matching Categories: <span style={{fontWeight: 'bold'}}>{foundCat.join(', ')}</span></p><p className={classes.foundCatText}>Choose package size to narrow down to a single category.</p></> : ''
                             }
                         </div> 
                     </div>
-                }               
-                <div className={classes.alignRight}>
-                    <Button size="small" className={classes.button} onClick={handleSubmit}>Submit</Button>
+                }
+                <div className={classes.divider} />               
+                <div style={{opacity: inputError.length ? '0.6' : '1', pointerEvents: inputError.length ? 'none' : 'auto'}}>
+                    <MyButton value='submit' handleSubmit={handleSubmit} bgColor={colors.backgroundButton} borderColor={colors.backgroundButton} fontColor={colors.textLabel} useIcon={false}/>
                 </div>
-            {/* </MyPaper> */}
             </div>
         </div>
     )

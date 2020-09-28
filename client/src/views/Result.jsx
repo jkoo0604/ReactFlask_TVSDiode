@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Accordion, AccordionSummary, AccordionDetails, Divider, Menu, MenuItem, IconButton } from '@material-ui/core';
+import { Button, Accordion, AccordionSummary, AccordionDetails, Divider, Menu, MenuItem, IconButton, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { GetApp, ExpandMoreRounded } from '@material-ui/icons';
 import { navigate } from '@reach/router';
@@ -11,8 +11,18 @@ import { CSVLink } from "react-csv";
 import colors from '../config/colors';
 import MyPaper from '../components/MyPaper';
 import MyTable from '../components/MyTable';
+import MyButton from '../components/MyButton';
+import MyHeader from '../components/MyHeader';
 
 const useStyles = makeStyles((theme) => ({
+    loading: {
+        display: 'flex',
+        margin: 'auto',
+        justifyContent: 'center',
+        alignContent: 'center',
+        height: '100vh',
+        paddingTop: '200px'
+    },
     root: {
         flexGrow: 1,
         margin: 'auto',
@@ -21,17 +31,36 @@ const useStyles = makeStyles((theme) => ({
         alignContent: 'center',
         justifyContent: 'center'
     },
+    content: {
+        width: '80%',
+        margin: 'auto',
+        padding: '30px'
+    },
+    header: {
+        display: 'flex',
+        alignItems: 'center'
+    },
+    headerText: {
+        width: '60%'
+    },
+    buttons: {
+        display: 'inline-flex',
+        width: '40%',
+        justifyContent: 'space-between'
+    },
+    title: {
+        textAlign: 'left',
+        fontSize: 22,
+        fontWeight: 'bolder',
+    },
+    desc: {
+        textAlign: 'left',
+    },
     card: {
         width: '80%',
         alignSelf: 'center',
         backgroundColor: colors.backgroundTable,
         padding: 15
-    },
-    title: {
-        color: colors.textNormal
-    },
-    subtext: {
-        color: colors.textNormal,
     },
     alignRight: {
         justifyContent: 'flex-end',
@@ -66,9 +95,6 @@ const useStyles = makeStyles((theme) => ({
     container: {
         maxHeight: 440,
         marginTop: 20
-    },
-    header: {
-        backgroundColor: colors.backgroundTable
     },
     cell: {
         color: colors.darkNeutral100,
@@ -110,7 +136,7 @@ const Results = props => {
     const [catCsv, setCatCsv] = useState([]);
     // const {reqBody, cats, reqType} = props.location.state;
 
-
+    console.log(reqBody['ref_ids'])
     useEffect(() => {
 
         fetch('/getresults', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(reqBody)}).then(r => r.json()).then(res => {
@@ -258,11 +284,27 @@ const Results = props => {
     };
 
     return (
-        loading===true ? <p>{loading}</p> :
+        loading===true ? <div className={classes.loading}><CircularProgress /></div> :
         <>      
         <div className={classes.root}>
-            <MyPaper width={'90%'}>
-                <div className={classes.alignBetween}>
+            <MyHeader title={'TVS-Diode Tool'} />
+            <div className={classes.content}>
+                <div className={classes.header}>
+                    <div className={classes.headerText}>
+                        <p className={classes.title}>{reqType === 'Select' ? 'Selection' : 'Evaluation'}</p>
+                        <p className={classes.desc}>{reqType === 'Select' ? <>Reference Designator: <span style={{fontWeight: 'bold'}}>{reqBody['ref_ids'][0]}</span></> : reqBody.categories.length > 1 ? 'All Categories' : `2nd Source Category: ${reqBody.categories[0]}`}</p>
+                    </div>
+                    <div className={classes.buttons}>
+                        <MyButton value='start over' bgColor={colors.backgroundSite} fontColor={colors.backgroundButton} borderColor={colors.backgroundButton} handleSubmit={handleBack} />
+                        <MyButton value='download' bgColor={colors.backgroundButton} fontColor={colors.textLabel} borderColor={colors.backgroundButton} handleSubmit={handleClick} useIcon={true} />
+                        <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+                            <MenuItem onClick={handlePDF} disabled={Object.keys(pdfData).length === 0}>Download result in PDF</MenuItem>
+                            <MenuItem disabled={csvData.length === 0}><CSVLink data={csvData} filename={"result.csv"} onClick={handleClose}>Download full data in CSV</CSVLink></MenuItem>
+                            <MenuItem disabled={catCsv.length === 0}><CSVLink data={catCsv} filename={"catdef.csv"} onClick={handleClose}>Download category definitions in CSV</CSVLink></MenuItem>
+                        </Menu>
+                    </div>
+                </div>
+                {/* <div className={classes.alignBetween}>
                     <Button size="small" className={classes.backButton} onClick={handleBack}>Reset</Button>
                     <IconButton className={classes.button} onClick={handleClick}><GetApp /></IconButton>
                     <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
@@ -270,8 +312,8 @@ const Results = props => {
                         <MenuItem disabled={csvData.length === 0}><CSVLink data={csvData} filename={"result.csv"} onClick={handleClose}>Download full data in CSV</CSVLink></MenuItem>
                         <MenuItem disabled={catCsv.length === 0}><CSVLink data={catCsv} filename={"catdef.csv"} onClick={handleClose}>Download category definitions in CSV</CSVLink></MenuItem>
                     </Menu>
-                </div>
-                <h2 className={classes.title}>{reqType === 'Evaluate' ? 'Evaluation ' : 'Selection '} Result</h2>
+                </div> */}
+                {/* <h2 className={classes.title}>{reqType === 'Evaluate' ? 'Evaluation ' : 'Selection '} Result</h2> */}
                 {/* <p className={classes.error}>
                     {
                         inputError !== '' ? errors[inputError] : ''
@@ -298,7 +340,7 @@ const Results = props => {
                         </div>
                     ))
                 }
-            </MyPaper>
+            </div>
         </div>
         </>
         

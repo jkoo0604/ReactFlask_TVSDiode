@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import colors from '../config/colors';
-import { FullscreenExit } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     root: {

@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
         textTransform: 'uppercase',
         border: `1px solid ${colors.backgroundAccordion}`,
         height: 45,
-        width: 100,
+        width: 130,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
