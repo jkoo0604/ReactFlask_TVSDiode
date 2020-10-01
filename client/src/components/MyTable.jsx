@@ -3,7 +3,7 @@ import React from 'react';
 import colors from '../config/colors';
 
 const MyTable = props => {
-    const {columns, data, fixedCol, tdStyle, thStyle} = props;
+    const {columns, data, fixedCol, tdStyle, thStyle, trStyle} = props;
 
     return (
         <table>
@@ -19,7 +19,7 @@ const MyTable = props => {
             <tbody>
                 {
                     data.map((row, idx) => (
-                        <tr key={idx}>
+                        <tr key={idx} style={{...trStyle}}>
                             {
                                 row.map((cell, id) => {
                                     if (id < fixedCol) {

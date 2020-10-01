@@ -120,7 +120,8 @@ def scoreTest(test_type, cat_def, components, score_ref, pf_test):
 def calculate(input):
     try:
         conn = pymysql.connect(host = 'localhost', user = user, password = password, db = db, charset = 'utf8mb4')
-        outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']
+        # outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']
+        outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V Breakdown Max','Dynamic Resistance (F)','Junction Capacitance','Leakage Current','Evaluated']
         results = {'ref_id': [], 'cat_id': [], 'results': []} 
         output_results = {'ref_id': [], 'cat_id': [], 'results': []} 
         for i in input['ref_ids']:

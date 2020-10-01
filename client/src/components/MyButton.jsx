@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme) => ({
         display: 'inline-flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '45px'
+        height: '45px',
+        cursor: 'pointer'
     },    
 }));
 

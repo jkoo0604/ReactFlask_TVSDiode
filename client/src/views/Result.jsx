@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center'
     },
     content: {
-        width: '87%',
+        width: '92%',
         margin: 'auto',
         padding: '30px'
     },
@@ -279,7 +279,7 @@ const Results = props => {
     
     const handlePDF = () => {
         handleClose();
-        let doc = new jsPDF();
+        let doc = new jsPDF('l');
         let finalY = doc.lastAutoTable.finalY || 10;
         let len = pdfData['text'].length;
 
@@ -359,11 +359,11 @@ const Results = props => {
                                     </AccordionDetails>
                                 </Accordion> */}
                                 <MyAccordion>
-                                    <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 12, textAlign: 'center'}} thStyle={{minWidth: 90, backgroundColor: colors.backgroundDark, fontSize: 12, verticalAlign: 'bottom'}} />
+                                    <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 12, textAlign: 'center'}} thStyle={{minWidth: 100, backgroundColor: colors.backgroundDark, fontSize: 12, verticalAlign: 'bottom'}} />
                                 </MyAccordion>
                                 <div className={classes.divider} /> 
                                 {
-                                    finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 14, textAlign: 'center'}} thStyle={{minWidth: 90, fontSize: 14}} /></div>
+                                    finalResult['output']['results'][idx] === '' ? <p className={classes.subtext}>No component found</p> : <div className={classes.overflow}><MyTable columns={finalResult['output']['results'][idx]['columns']} data={finalResult['output']['results'][idx]['data']} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 14, textAlign: 'center'}} thStyle={{minWidth: 100, fontSize: 14}} trStyle={{height: 25}} /></div>
                                 }
                             </div>
                         </div>
