@@ -1,7 +1,5 @@
 import React from 'react';
 
-import colors from '../config/colors';
-
 const MyTable = props => {
     const {columns, data, fixedCol, tdStyle, thStyle, trStyle} = props;
 
@@ -36,21 +34,6 @@ const MyTable = props => {
                         </tr>
                     ))
                 }
-                {/* <tr>
-                    {
-                        data.map((row, idx) => {
-                            if (idx < fixedCol) {
-                                return (
-                                    <td key={idx} style={{...tdStyle, position: 'sticky', left: idx}}>{row}</td>
-                                )
-                            } else {
-                                return (
-                                    <td key={idx} style={tdStyle}>{row}</td>
-                                )
-                            }
-                        })
-                    }
-                </tr> */}
             </tbody>
         </table>
     )

@@ -12,7 +12,6 @@ def loadCatDef():
         cat_def = cat_def.fillna('')
         col_name_ref = pd.read_sql_query("select * from col_ref", conn)
         cat_def = cat_def.rename(columns=dict(zip(col_name_ref['col_name'], col_name_ref['final_name'])))
-        # print(cat_def.to_dict(orient='split'))
         return {'result_status': 'Success', 'data': cat_def.to_dict(orient='split')}
     except Exception as e:
         print(e)
@@ -120,7 +119,6 @@ def scoreTest(test_type, cat_def, components, score_ref, pf_test):
 def calculate(input):
     try:
         conn = pymysql.connect(host = 'localhost', user = user, password = password, db = db, charset = 'utf8mb4')
-        # outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V-br (V-Trig) - Max (V)','R-Dyn (Forward) (Ohm)','C-J Max (pF)','I - Leakage max (uA)','Evaluated']
         outputCols = ['Manufacturer','MPN','Status','Rank','Package Size','V Breakdown Max','Dynamic Resistance (F)','Junction Capacitance','Leakage Current','Evaluated']
         results = {'ref_id': [], 'cat_id': [], 'results': []} 
         output_results = {'ref_id': [], 'cat_id': [], 'results': []} 
@@ -129,7 +127,6 @@ def calculate(input):
             output_results['ref_id'].append(i)
             
         for cat_id in input['categories']:
-            print(cat_id)
             results['cat_id'].append(cat_id)
             output_results['cat_id'].append(cat_id)
 
@@ -140,12 +137,6 @@ def calculate(input):
             col_name_ref = pd.read_sql_query("select * from col_ref", conn)
 
             if components.shape[0] == 0:
-                # components = components.rename(columns=dict(zip(col_name_ref['col_name'], col_name_ref['final_name'])))
-                # del components['id']
-                # newCol = pd.DataFrame(columns=list(components.columns))
-                # newOutput = pd.DataFrame(columns=['Manufacturer','MPN','Status','Rank','Package Size','V Breakdown Max','Dynamic Resistance (Forward)','Junction Capacitance','Leakage Current','Evaluated'])
-                # results['results'].append(newCol.to_dict(orient='split'))
-                # output_results['results'].append(newOutput.to_dict(orient='split'))
                 results['results'].append('')
                 output_results['results'].append('')
                 continue

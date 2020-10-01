@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Accordion, AccordionSummary, AccordionDetails, Divider, Menu, MenuItem, IconButton, CircularProgress } from '@material-ui/core';
+import { Menu, MenuItem, CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { GetApp, ExpandMoreRounded } from '@material-ui/icons';
 import { navigate } from '@reach/router';
 import { useSelector, useDispatch } from 'react-redux';
 import jsPDF from 'jspdf';
@@ -9,7 +8,6 @@ import 'jspdf-autotable';
 import { CSVLink } from "react-csv";
 
 import colors from '../config/colors';
-import MyPaper from '../components/MyPaper';
 import MyTable from '../components/MyTable';
 import MyButton from '../components/MyButton';
 import MyHeader from '../components/MyHeader';
@@ -26,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     },
     circle: {
         color: colors.backgroundButton,
-        // backgroundColor: colors.backgroundButton
     },
     root: {
         flexGrow: 1,
@@ -84,64 +81,13 @@ const useStyles = makeStyles((theme) => ({
         borderBottomStyle: 'solid',
         opacity: '0.5',
         marginBottom: '8px'
-    },
-
-    card: {
-        width: '80%',
-        alignSelf: 'center',
-        backgroundColor: colors.backgroundTable,
-        padding: 15
-    },
-    alignRight: {
-        justifyContent: 'flex-end',
-    },
-    alignLeft: {
-        justifyContent: 'flex-start',
-    },
-    alignCenter: {
-        justifyContent: 'center',
-        textAlign: 'center'
-    },
-    alignBetween: {
-        justifyContent: 'space-between'
-    },
-    button: {
-        color: colors.textLabel,
-        backgroundColor: colors.backgroundButton
-    },
-    backButton: {
-        color: colors.textLabel,
-        backgroundColor: colors.backgroundButton
-    },
-    error: {
-        color: colors.textError,
-        marginBottom: 30
-    },
-    paper: {
-        width: '80%',
-        alignContent: 'center',
-        backgroundColor: colors.backgroundSite,
-    },
-    container: {
-        maxHeight: 440,
-        marginTop: 20
-    },
-    cell: {
-        color: colors.darkNeutral100,
-        borderBottom: 'solid',
-        borderBottomWidth: 0.5,
-        borderBottomColor: colors.darkNeutral40,
-    },
+    },   
     overflow: {
         overflow: 'auto'
     },
-    summary: {
-        backgroundColor: colors.backgroundAccordion,
-        color: colors.textLabel
-    }
 }));
 
-const Results = props => {
+const Result = props => {
     const classes = useStyles();
     const cats = useSelector(state => state.catDef);
     const request = useSelector(state => state.request);
@@ -151,12 +97,10 @@ const Results = props => {
     const dispatch = useDispatch();
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(true);
-    // const [finalResult, setFinalResult] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const [csvData, setCsvData] = useState([]);
     const [pdfData, setPdfData] = useState({});
     const [catCsv, setCatCsv] = useState([]);
-    // const {reqBody, cats, reqType} = props.location.state;
 
     console.log(reqBody['ref_ids'])
     useEffect(() => {
@@ -179,7 +123,6 @@ const Results = props => {
             let catList = queryResult['data']['cat_id'];
 
             // convert datetime into JS
-            // finalResult['output']['results'][idx]['data']
             for (let i=0; i<data.length; i++) {
                 if (data[i] === '') continue;
                 for (let j=0; j<data[i]['data'].length; j++) {
@@ -297,11 +240,6 @@ const Results = props => {
     };
 
     const handleBack = () => {
-        // dispatch({
-        //     type: 'RESET',
-        //     queryResult: null,
-        //     request: null
-        // });
         navigate('/', {replace: true});
     };
 
@@ -326,21 +264,6 @@ const Results = props => {
                         </Menu>
                     </div>
                 </div>
-                {/* <div className={classes.alignBetween}>
-                    <Button size="small" className={classes.backButton} onClick={handleBack}>Reset</Button>
-                    <IconButton className={classes.button} onClick={handleClick}><GetApp /></IconButton>
-                    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-                        <MenuItem onClick={handlePDF} disabled={Object.keys(pdfData).length === 0}>Download result in PDF</MenuItem>
-                        <MenuItem disabled={csvData.length === 0}><CSVLink data={csvData} filename={"result.csv"} onClick={handleClose}>Download full data in CSV</CSVLink></MenuItem>
-                        <MenuItem disabled={catCsv.length === 0}><CSVLink data={catCsv} filename={"catdef.csv"} onClick={handleClose}>Download category definitions in CSV</CSVLink></MenuItem>
-                    </Menu>
-                </div> */}
-                {/* <h2 className={classes.title}>{reqType === 'Evaluate' ? 'Evaluation ' : 'Selection '} Result</h2> */}
-                {/* <p className={classes.error}>
-                    {
-                        inputError !== '' ? errors[inputError] : ''
-                    }
-                </p> */}
                 {
                     finalResult['data']['cat_id'].map((cat, idx) => (
                         <div key={idx} className={classes.resultDiv}>
@@ -348,16 +271,6 @@ const Results = props => {
                                 {`Category ${cat}`}
                             </div>
                             <div className={classes.resultBody}>
-                                {/* <Accordion>
-                                    <AccordionSummary className={classes.summary} expandIcon={<ExpandMoreRounded style={{fill: colors.textLabel}}/>}>
-                                        Category {cat}
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <div className={classes.overflow}>
-                                        <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={3} tdStyle={{color: colors.neutral80}} thStyle={{minWidth: 50, backgroundColor: colors.backgroundDark}} />
-                                        </div>
-                                    </AccordionDetails>
-                                </Accordion> */}
                                 <MyAccordion>
                                     <MyTable columns={cats['colList']} data={[cats['allCats'][parseInt(cat)-1]]} fixedCol={0} tdStyle={{color: colors.neutral80, fontSize: 12, textAlign: 'center'}} thStyle={{minWidth: 100, backgroundColor: colors.backgroundDark, fontSize: 12, verticalAlign: 'bottom'}} />
                                 </MyAccordion>
@@ -376,4 +289,4 @@ const Results = props => {
     )
 }
 
-export default Results;
+export default Result;

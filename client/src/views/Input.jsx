@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Radio, RadioGroup, Select, MenuItem, FormControl, InputLabel, Button, Checkbox, FormControlLabel, TextField, FormHelperText, FormLabel } from '@material-ui/core';
+import { Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel, TextField, FormHelperText } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
 import { useSelector, useDispatch } from 'react-redux';
 
 import colors from '../config/colors';
-import { catRef, usageRef, sizeArr, displayCols } from '../config/categories';
+import { catRef, usageRef } from '../config/categories';
 import MyToggle from '../components/MyToggle';
 import MyHeader from '../components/MyHeader';
 import MyButton from '../components/MyButton';
@@ -205,18 +205,6 @@ const Input = () => {
         setSelectedCats([]);
         setFoundCat(catRef[usageRef[e.target.value]]);
         setMaxFreq(e.target.value);
-    };
-
-    const updateSizeOptions = (cats) => {
-        let tempCats = [];
-        for (let i=0; i<cats.length; i++) {
-            tempCats.push(result['orderedCats'][1]['values'][cats[i]-1]);
-        };
-        let tempCatsDeduped = ([...new Set(tempCats)]);
-        if (tempCatsDeduped.length === 1) {
-            setSize(tempCatsDeduped[0]);
-        };
-        setSizeOptions(tempCatsDeduped);
     };
 
     const handleSelectSize = e => {

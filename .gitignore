@@ -3,6 +3,7 @@
 *.xlsx
 *.numbers
 mysqlconnection.py
+logic-copy.py
 config/
 *.zip
 screenshots/
