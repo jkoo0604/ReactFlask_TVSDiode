@@ -7,6 +7,10 @@ logic-copy.py
 config/
 *.zip
 screenshots/
+Categories.jsx
+Evaluator.jsx
+Results.jsx
+Selector.jsx
 
 # dependencies
 /node_modules
