@@ -27,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
     inactive: {
         background: 'transparent',
         colors: colors.textNormal
+    },
+    buttonText: {
+        cursor: 'pointer'
     }
     
 }));
@@ -36,7 +39,7 @@ const MyToggle = ({type, handleTypeChange, value, position}) => {
 
     return(
         <div className={`${classes.button} ${position === 'left' ? classes.left : classes.right} ${type === '' ? (position === 'left' ? classes.active : classes.inactive) : (type === value ? classes.active : classes.inactive)}`} onClick={() => handleTypeChange(value)}>
-            {value}
+            <span className={classes.buttonText}>{value}</span>
         </div>
     );
 }

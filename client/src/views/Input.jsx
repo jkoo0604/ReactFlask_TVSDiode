@@ -41,7 +41,8 @@ const useStyles = makeStyles((theme) => ({
     },
     desc: {
         textAlign: 'left',
-        padding: '0px 30px'
+        padding: '0px 30px',
+        marginBottom: '35px'
     },
     evalForm: {
         margin: 'auto',
@@ -295,11 +296,11 @@ const Input = () => {
                         <>Choose <span style={{fontWeight: 'bold'}}>usage type</span> or <span style={{fontWeight: 'bold'}}>maximum operating frequency</span> to look up components in the category matching the criteria.</>
                     }
                 </p>
-                <p className={classes.error}>
+                {/* <p className={classes.error}>
                     {
                         inputError !== '' ? errors[inputError] : ''
                     }
-                </p>
+                </p> */}
                 {
                     type === '' ? <></> : type === 'Evaluate' ? 
                     <div className={classes.evalForm}>
@@ -336,7 +337,7 @@ const Input = () => {
                     </div> :
                     <div className={classes.selectForm}>
                         <TextField className={classes.selectInput} label="Reference Designator" required value={refDeg} onChange={(e) => setRefDeg(e.target.value)} variant="filled" InputProps={{classes: {root: classes.inputStyle}}} error={inputError === 'noRefDeg'} helperText='Required' />
-                        <FormControlLabel control={<Checkbox checked={dropFail} onChange={() => setDropFail(!dropFail)} fontSize='small' color='default'/>} label={'Exclude failed components'} size='small' className={classes.selectCheck} />
+                        {/* <FormControlLabel control={<Checkbox checked={dropFail} onChange={() => setDropFail(!dropFail)} fontSize='small' color='default'/>} label={'Exclude failed components'} size='small' className={classes.selectCheck} /> */}
 
                         <div className={classes.dropdownWrapper}>
                         <div className={`${classes.dropdown} ${classes.textLeft}`}>
@@ -382,6 +383,9 @@ const Input = () => {
                             </Select>
                             <FormHelperText>Optional</FormHelperText>
                         </FormControl>
+                        </div>
+                        <div className={`${classes.dropdown} ${classes.textRight}`}>
+                            <FormControlLabel control={<Checkbox checked={dropFail} onChange={() => setDropFail(!dropFail)} fontSize='small' color='default'/>} label={'Exclude failed components'} size='small' className={classes.selectCheck} />
                         </div>
                         </div>
                         <div className={`${classes.foundCat} ${classes.alignCenter}`}>

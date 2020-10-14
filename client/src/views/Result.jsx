@@ -43,11 +43,11 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
     },
     headerText: {
-        width: '60%'
+        flexGrow: 1
     },
     buttons: {
         display: 'inline-flex',
-        width: '40%',
+        width: '32%',
         justifyContent: 'space-between'
     },
     title: {
